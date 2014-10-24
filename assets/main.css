@@ -95,11 +95,24 @@ a:hover {
     text-align: 'right';
 }
 
-ul li {
+ul, ol {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+li {
+    padding-top: 7px;
+}
+
+ul>li {
     list-style: square;
 }
 
-/* Inverse slide */
+ol>li {
+    list-style: decimal;
+}
+
+/* Title slide */
 
 .title h1 {
     font-size: 80px;
