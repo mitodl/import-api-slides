@@ -8,10 +8,9 @@ class: title, center, middle
 ---
 
 
-## Background - XML workflow
+## **Background** > The Git-based XML Workflow
 
-At MIT, we support and heavily utilize a direct XML course development
-workflow:
+### At MIT, we support and heavily utilize a direct XML course development workflow:
 
 1. A content developer merges a change into a production branch
 2. The developer pushes the change to a GitHub/Enterprise repository
@@ -21,19 +20,29 @@ workflow:
    2. Said **tool** checks out the repository and *imports the course
       automatically*
 
----
-
-
-## Background - Tools to automate this workflow
-
-- gitreload for residential
-- git2edx for MOOC
-
+Currently, there are two different tools that consume these webhook payloads..
 
 ---
 
 
-## Rationale - Fragility at the import stage
+## **Background** > The Webhook Consumers
+
+### gitreload - *for **residential** courses*
+- Hosted on our app boxes alongside the LMS
+- Runs the `course_import` Django management command
+
+### git2edx - *for **MOOCs** on edx.org*
+- Runs on it's own VM
+- Imports the course on **studio.edx.org** :
+  1. **GET** `/signin` for CSRF token cookie
+  2. **POST** login fields to `/login_post` for session cookie
+  3. **POST** course archive to `/import/<course_id>/<filename>`
+
+
+---
+
+
+## **Rationale** > Inherent Fragility at the Import Stage
 
 - Authentication uses CSRF passed by cookie.
 - It's not intended for robots.
@@ -43,13 +52,13 @@ workflow:
 ---
 
 
-## Design - Similar APIs in edX
+## **Design** > Similar APIs in edX
 
 
 ---
 
 
-## Design - Django rest framework
+## **Design** > Django Rest Framework
 
 Other APIs using it:
 - Mobile API?
@@ -60,7 +69,7 @@ Other APIs using it:
 ---
 
 
-## Design - Authentication
+## **Design** > Authentication
 
 - Don't use session authentication
 - django-oauth2-provider?
@@ -70,7 +79,7 @@ Other APIs using it:
 ---
 
 
-## Design - Proposed API URLs
+## **Design** > Proposed API URLs
 
 - Import URL
 - Export URL
@@ -79,11 +88,11 @@ Other APIs using it:
 ---
 
 
-## Example usage - Authenticate and import a course
+## **Design** > Versioning the URLs
 
 
 ---
 
 
-## Design - Versioning the URLs
+## **Example usage** > Authenticate and Import
 
