@@ -35,8 +35,8 @@ Currently, there are two different tools that consume these webhook payloads..
 - Runs on it's own VM
 - Imports the course on **studio.edx.org** :
   1. **GET** `/signin` for CSRF token cookie
-  2. **POST** login fields to `/login_post` for session cookie
-  3. **POST** course archive to `/import/<course_id>/<filename>`
+  2. **POST** `/login_post` with login fields for session cookie
+  3. **POST** `/import/<course_id>/<filename>` with course archive
 
 
 ---
@@ -44,21 +44,34 @@ Currently, there are two different tools that consume these webhook payloads..
 
 ## **Rationale** > Inherent Fragility at the Import Stage
 
-- Authentication uses CSRF passed by cookie.
-- It's not intended for robots.
-- Subject to change as UI changes
+### Not intended for robots
+- Must obtain CSRF token via arbitrary request intended for browsers (returns HTML)
+- Sessions for authentication
+
+### Subject to change as UI changes
+- Modeled around user interaction
+- **No API Versioning = No Real Support**
 
 
 ---
 
+class: center, middle
 
-## **Design** > Similar APIs in edX
+## **Design** > The Analytics Data API As a Model
+
+### Intended for robots
+- Uses Django Rest Framework
+- Token authentication
+- API versioning
+- Returns JSON and CSV
 
 
 ---
 
 
 ## **Design** > Django Rest Framework
+
+- Supports token auth and oauth2 out of the box
 
 Other APIs using it:
 - Mobile API?
@@ -71,18 +84,27 @@ Other APIs using it:
 
 ## **Design** > Authentication
 
-- Don't use session authentication
-- django-oauth2-provider?
-- How to protect against CSRF without the cookie
+Token authentication?
+
+Need good vs. of Token 
 
 
 ---
 
 
-## **Design** > Proposed API URLs
+## **Design** > API URLs
 
-- Import URL
-- Export URL
+### Import:
+```python
+POST | PUT import/ (org/course/run) | (course-v1:org+course+run)
+```
+- Multipart form post
+
+### Export:
+```sh
+GET export/ (org/course/run) | (course-v1:org+course+run)
+```
+- HTTP_ACCEPT = 'application/x-tgz'
 
 
 ---
@@ -90,9 +112,23 @@ Other APIs using it:
 
 ## **Design** > Versioning the URLs
 
+### Similar to the Analytics Data API
+
+In Studio's URLs:
+```python
+urlpatterns = patterns(
+    '',
+    url(r'^api/v0/', include('api.v0.urls', namespace='v0')),
+)
+```
+- Solidify support
+
 
 ---
 
 
 ## **Example usage** > Authenticate and Import
 
+Walkthrough:
+- Authenticate
+- Import
